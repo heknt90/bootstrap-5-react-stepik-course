@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Modal } from 'bootstrap'
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import List from "list.js";
 import './App.css';
 import ModalAddGood from "./components/ModalAddGood/ModalAddGood";
 import MenuSearchAndCreateGood from "./components/MenuSearchAndCreateGood/MenuSearchAndCreateGood";
@@ -20,13 +21,20 @@ function App() {
   const [totalPrice, setTotalPrice] = useState(0)
 
   const newGoodRef = useRef(null)
+  const goodsTableRef = useRef(null)
 
   useEffect(() => {
     setGoods(getOrInitializeLocalStorageItem("goods", []))
   }, [])
-
+  
   useEffect(() => {
     saveItemToLocalStorage("goods", goods)
+    if (goods.length) {
+      let options = {
+        valueNames: ["name", "price"]
+      }
+      new List(goodsTableRef.current, options)
+    }
   }, [goods])
 
   const goodSaveHandler = () => {
@@ -58,7 +66,7 @@ function App() {
       </tr>
     )
   )
-
+  
   const row2 = cartGoods.map((item, index) => (
       <tr className="align-middle" key={index}>
         <td>{`${index+1}`}</td>
@@ -71,12 +79,12 @@ function App() {
       </tr>
     )
   )
-  
+    
   return (
     <div className="App container">
       <div className="row">
         <div className="col-xs-12 col-xxl-5">
-          <div className="goods_box" id="goods">
+          <div className="goods_box" id="goods" ref={goodsTableRef}>
             <MenuSearchAndCreateGood modalRef={newGoodRef} searchInputText={searchInputText} searchInputOnChange={setSearchInputOnChange} />
             <div className="table-responsive">
               <table className="goods table mt-3" id="table1" hidden={goods.length ? null : "hidden"}>
