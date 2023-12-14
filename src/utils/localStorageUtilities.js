@@ -1,7 +1,7 @@
 export function getOrInitializeLocalStorageItem(item, defaultValue) {
   if (!localStorage.getItem(item)) {
-    localStorage.setItem(item, JSON.stringify(defaultValue))
-  }
+    saveItemToLocalStorage(item, defaultValue)
+  } 
   return JSON.parse(localStorage.getItem(item))
 }
 
