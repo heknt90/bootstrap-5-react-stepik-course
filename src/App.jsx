@@ -42,8 +42,7 @@ function App() {
       setNewGoodTitle("")
       setNewGoodPrice(0)
       setNewGoodsCount(1)
-      setGoods(prev => [...prev, {name: newGoodTitle, price: newGoodPrice, count: newGoodsCount}])
-      // saveItemToLocalStorage("goods", goods)
+      setGoods(prev => [...prev, {id: prev.length, name: newGoodTitle, price: newGoodPrice, count: newGoodsCount}])
       const modal = Modal.getInstance(newGoodRef.current)
       modal.hide()
     } else {
@@ -55,31 +54,134 @@ function App() {
     }
   }
 
-  const row1 = goods.map((item, index) => (
-      <tr className="align-middle" key={index}>
-        <td>{`${index+1}`}</td>
-        <td className="name">{item.name}</td>
-        <td className="price">{item.price}</td>
-        <td>{item.count}</td>
-        <td><button className="good_delete btn btn-danger" data-delete={index}>&#10006;</button></td>
-        <td><button className="good_ btn btn-primary" data-good={index}>&#10149;</button></td>
+  const addToCartButton = (goodId) => <button className="good_ btn btn-primary" data-good={goodId} onClick={addToCartHandler}>&#10149;</button>
+  const deleteGoodButton = (goodId) => <button className="good_delete btn btn-danger" data-delete={goodId} onClick={removeGoodHandler} >&#10006;</button>
+
+  const row1 = goods.map(good => (
+      <tr className="align-middle" key={good.id}>
+        <td>{`${good.id+1}`}</td>
+        <td className="name">{good.name}</td>
+        <td className="price">{good.price}</td>
+        <td>{good.count}</td>
+        <td>{isGoodAvailable(good.id) ? deleteGoodButton(good.id) : ""}</td>
+        <td>{isGoodAvailable(good.id) ? addToCartButton(good.id) : ""}</td>
       </tr>
     )
   )
   
-  const row2 = cartGoods.map((item, index) => (
-      <tr className="align-middle" key={index}>
-        <td>{`${index+1}`}</td>
-        <td className="price_name">{item.name}</td>
-        <td className="price_one">{item.price}</td>
-        <td className="price_count">{item.count}</td>
-        <td className="price_discount"><input type="text" data-goodid={index+1} value={item.discount} min="0" max="100" /></td>
-        <td>{item.count*item.price - item.count*item.price*item.discount*.01}</td>
-        <td><button className="good_delete btn btn-danger" data-delete={index}>&#10006;</button></td>
+  const row2 = cartGoods.map(good => (
+      <tr className="align-middle" key={good.id}>
+        <td>{`${good.id+1}`}</td>
+        <td className="price_name">{good.name}</td>
+        <td className="price_one">{good.price}</td>
+        <td className="price_count">{good.count}</td>
+        <td className="price_discount"><input type="number" data-good={good.id} value={getDiscount(good.id)} onChange={discountChangeHandler} min="0" max="100" /></td>
+        <td>{good.count*good.price - good.count*good.price*good.discount*.01}</td>
+        <td><button className="good_delete btn btn-danger" data-delete={good.id} onClick={removeGoodFromCartHandler} >&#10006;</button></td>
       </tr>
     )
   )
     
+  function isGoodAvailable(goodId) {
+    const candidate = goods.find(good => good.id === goodId)
+    return (candidate && candidate.count > 0)
+  }
+
+  function isGoodInCart(goodId) {
+    return !!cartGoods.find(good => good.id === goodId)
+  }
+
+  function removeGoodHandler(event) {
+    const deleteIndex = parseInt(event.target.dataset.delete)
+    const goodCount = goods.find(good => good.id === deleteIndex).count
+    if (goodCount > 1 || isGoodInCart(deleteIndex)) {
+      setGoods(decrementItemCount(deleteIndex, goods))
+    } else {
+      Swal.fire({
+        title: "Внимание!",
+        text: "Вы действительно хотите удалить товар?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена"
+      })
+        .then(result => {
+          if (result.isConfirmed) {
+            const newGoods = goods.filter(el => el.id !== deleteIndex)
+            return newGoods
+          }
+        })
+        .then(result => {
+          if (result) {
+            setGoods(result)
+          }
+        })
+    }    
+  }
+
+  function removeGoodFromCartHandler(event) {
+    const deleteIndex = parseInt(event.target.dataset.delete)
+    const good = cartGoods.find(good => good.id === deleteIndex)
+    if (good && good.count > 1) {
+      setCartGoods(decrementItemCount(deleteIndex, cartGoods))
+    } else {
+      setCartGoods(deleteListItem(deleteIndex, cartGoods))
+    }
+    setGoods(incrementItemCount(deleteIndex, goods))
+  }
+
+  function addToCartHandler(event) {
+    const goodId = parseInt(event.target.dataset.good)
+    setGoods(decrementItemCount(goodId, goods))
+    const candidate = cartGoods.find(good => good.id === goodId)
+    if (candidate) {
+      incrementItemCount(goodId, cartGoods)
+    } else {
+      const newGood = {...goods.find(good => good.id === goodId)}
+      newGood.count = 1
+      newGood.discount = 0
+      setCartGoods(prev => [...prev, newGood])
+    }
+  }
+
+  function incrementItemCount(goodId, list) {
+    return changeItemCount(1, goodId, list)
+  }
+
+  function decrementItemCount(goodId, list) {
+    return changeItemCount(-1, goodId, list)
+  }
+
+  function changeItemCount(diff, goodId, list) {
+    return list.map(good => {
+      if (good.id === goodId) {
+        good.count += diff
+      }
+      return good
+    })
+  }
+
+  function getDiscount(goodId) {
+    return (cartGoods.find(good => good.id === goodId)).discount
+  }
+
+  function discountChangeHandler(event) {
+    const goodId = parseInt(event.target.dataset.good)
+    const newValue = parseInt(event.target.value)
+    setCartGoods(cartGoods.map(good => {
+      if (good.id === goodId) {
+        good.discount = newValue
+      }
+      return good
+    }))
+  }
+
+  function deleteListItem(goodId, list) {
+    return list.filter(el => el.id !== goodId)
+  }
+
   return (
     <div className="App container">
       <div className="row">
@@ -129,7 +231,7 @@ function App() {
           </div>
         </div>
       </div>
-      <ModalAddGood newGoodRef={newGoodRef} goodSaveHandler={goodSaveHandler} goodTitle={newGoodTitle} goodTitleOnChange={setNewGoodTitle} goodPrice={newGoodPrice} goodPriceOnChange={setNewGoodPrice} goodsCount={newGoodsCount} goodsCountOnChange={setNewGoodsCount} />
+      <ModalAddGood newGoodRef={newGoodRef} goodSaveHandler={goodSaveHandler} goodTitle={newGoodTitle} goodTitleOnChange={setNewGoodTitle} goodPrice={newGoodPrice} goodPriceOnChange={setNewGoodPrice} goodsCount={newGoodsCount} goodsCountOnChange={value => setNewGoodsCount(parseInt(value))} />
     </div>
   );
 }
