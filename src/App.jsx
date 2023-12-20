@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Modal } from 'bootstrap'
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import List from "list.js";
 import './App.css';
 import ModalAddGood from "./components/ModalAddGood/ModalAddGood";
 import MenuSearchAndCreateGood from "./components/MenuSearchAndCreateGood/MenuSearchAndCreateGood";
@@ -10,31 +9,44 @@ import TotalPriceMenu from "./components/TotalPriceMenu/TotalPriceMenu";
 import GoodsListTable from "./components/GoodsListTable/GoodsListTable";
 import CartListTale from "./components/CartListTable";
 import { getOrInitializeLocalStorageItem, saveItemToLocalStorage } from "./utils/localStorageUtilities"
+
 const mySwal = withReactContent(Swal)
 
 function App() {
   const [newGoodTitle, setNewGoodTitle] = useState("")
   const [newGoodPrice, setNewGoodPrice] = useState(0)
   const [newGoodsCount, setNewGoodsCount] = useState(1)
-  const [searchInputText, setSearchInputOnChange] = useState("")
+  const [searchInputText, setSearchInputText] = useState("")
   const [goods, setGoods] = useState([])
   const [cartGoods, setCartGoods] = useState([])
   const newGoodRef = useRef(null)
   const goodsTableRef = useRef(null)
-
+  
   useEffect(() => {
     setGoods(getOrInitializeLocalStorageItem("goods", []))
   }, [])
   
   useEffect(() => {
-    saveItemToLocalStorage("goods", goods)
-    if (goods.length) {
-      let options = {
-        valueNames: ["name", "price"]
-      }
-      new List(goodsTableRef.current, options)
+    if (!searchInputText) {
+      saveItemToLocalStorage("goods", goods)
     }
-  }, [goods])
+  }, [goods, searchInputText])
+
+  function setSearchInputOnChange(event) {
+    const inputValue = event.target.value
+    setSearchInputText(inputValue)
+  }
+
+  function filterGoodsList() {
+    const condition = new RegExp(searchInputText, 'i')
+    const newGoods = goods.filter(good => condition.test(good.name) || condition.test(good.price))
+    return newGoods
+  }
+
+  const createNewGoodHandler = () => {
+    const modal = new Modal(newGoodRef.current)
+    modal.show()
+  }
 
   const goodSaveHandler = () => {
     if (newGoodTitle && newGoodsCount) {
@@ -168,8 +180,8 @@ function App() {
       <div className="row">
         <div className="col-xs-12 col-xxl-5">
           <div className="goods_box" id="goods" ref={goodsTableRef}>
-            <MenuSearchAndCreateGood modalRef={newGoodRef} searchInputText={searchInputText} searchInputOnChange={setSearchInputOnChange} />
-            <GoodsListTable goods={goods} isGoodAvailable={isGoodAvailable} isGoodsNotEmpty={isGoodsNotEmpty} addToCartHandler={addToCartHandler} removeGoodHandler={removeGoodHandler} />
+            <MenuSearchAndCreateGood createNewGoodHandler={createNewGoodHandler} searchInputText={searchInputText} searchInputOnChange={setSearchInputOnChange} />
+            <GoodsListTable goods={filterGoodsList()} isGoodAvailable={isGoodAvailable} isGoodsNotEmpty={isGoodsNotEmpty} addToCartHandler={addToCartHandler} removeGoodHandler={removeGoodHandler} />
           </div>
         </div>
         <div className="col-xs-12 col-xxl-7">
