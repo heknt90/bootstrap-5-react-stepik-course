@@ -7,6 +7,7 @@ import './App.css';
 import ModalAddGood from "./components/ModalAddGood/ModalAddGood";
 import MenuSearchAndCreateGood from "./components/MenuSearchAndCreateGood/MenuSearchAndCreateGood";
 import TotalPriceMenu from "./components/TotalPriceMenu/TotalPriceMenu";
+import GoodsListTable from "./components/GoodsListTable/GoodsListTable";
 import { getOrInitializeLocalStorageItem, saveItemToLocalStorage } from "./utils/localStorageUtilities"
 
 const mySwal = withReactContent(Swal)
@@ -18,7 +19,6 @@ function App() {
   const [searchInputText, setSearchInputOnChange] = useState("")
   const [goods, setGoods] = useState([])
   const [cartGoods, setCartGoods] = useState([])
-  const [totalPrice, setTotalPrice] = useState(0)
 
   const newGoodRef = useRef(null)
   const goodsTableRef = useRef(null)
@@ -52,22 +52,7 @@ function App() {
         text: "Пожалуйста, заполните все поля!"
       })
     }
-  }
-
-  const addToCartButton = (goodId) => <button className="good_ btn btn-primary" data-good={goodId} onClick={addToCartHandler}>&#10149;</button>
-  const deleteGoodButton = (goodId) => <button className="good_delete btn btn-danger" data-delete={goodId} onClick={removeGoodHandler} >&#10006;</button>
-
-  const row1 = goods.map(good => (
-      <tr className="align-middle" key={good.id}>
-        <td>{`${good.id+1}`}</td>
-        <td className="name">{good.name}</td>
-        <td className="price">{good.price}</td>
-        <td>{good.count}</td>
-        <td>{isGoodAvailable(good.id) ? deleteGoodButton(good.id) : ""}</td>
-        <td>{isGoodAvailable(good.id) ? addToCartButton(good.id) : ""}</td>
-      </tr>
-    )
-  )
+  } 
   
   const row2 = cartGoods.map(good => (
       <tr className="align-middle" key={good.id}>
@@ -76,7 +61,7 @@ function App() {
         <td className="price_one">{good.price}</td>
         <td className="price_count">{good.count}</td>
         <td className="price_discount"><input type="number" data-good={good.id} value={getDiscount(good.id)} onChange={discountChangeHandler} min="0" max="100" /></td>
-        <td>{good.count*good.price - good.count*good.price*good.discount*.01}</td>
+        <td>{calculateCartGoodPrice(good)}</td>
         <td><button className="good_delete btn btn-danger" data-delete={good.id} onClick={removeGoodFromCartHandler} >&#10006;</button></td>
       </tr>
     )
@@ -182,34 +167,30 @@ function App() {
     return list.filter(el => el.id !== goodId)
   }
 
+  function calculateCartGoodPrice(good) {
+    return good.count*good.price - good.count*good.price*good.discount*.01
+  }
+
+  function calculateCartTotalPrice() {
+    let result = 0
+    cartGoods.forEach(good => {
+      result += calculateCartGoodPrice(good)
+    })
+    return result
+  }
+
   return (
     <div className="App container">
       <div className="row">
         <div className="col-xs-12 col-xxl-5">
           <div className="goods_box" id="goods" ref={goodsTableRef}>
             <MenuSearchAndCreateGood modalRef={newGoodRef} searchInputText={searchInputText} searchInputOnChange={setSearchInputOnChange} />
-            <div className="table-responsive">
-              <table className="goods table mt-3" id="table1" hidden={goods.length ? null : "hidden"}>
-                <thead>
-                  <tr className="table-primary align-middle">
-                    <th data-type="number">№</th>
-                    <th data-type="string">Название</th>
-                    <th data-type="number">Цена, &#8381;</th>
-                    <th data-type="number">Количество</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody className="list">
-                  {row1}
-                </tbody>
-              </table>
-            </div>
+            <GoodsListTable goods={goods} isGoodAvailable={isGoodAvailable} addToCartHandler={addToCartHandler} removeGoodHandler={removeGoodHandler} />
           </div>
         </div>
         <div className="col-xs-12 col-xxl-7">
           <div className="price_box">
-            <TotalPriceMenu totalPrice={totalPrice} />
+            <TotalPriceMenu totalPrice={calculateCartTotalPrice()} />
             <div className="table-responsive">
               <table className="price table mt-3" id="table2" hidden={goods.length ? null : "hidden"}>
                 <thead>
