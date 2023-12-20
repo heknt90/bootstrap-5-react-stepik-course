@@ -169,7 +169,7 @@ function App() {
         <div className="col-xs-12 col-xxl-5">
           <div className="goods_box" id="goods" ref={goodsTableRef}>
             <MenuSearchAndCreateGood modalRef={newGoodRef} searchInputText={searchInputText} searchInputOnChange={setSearchInputOnChange} />
-            <GoodsListTable goods={goods} isGoodAvailable={isGoodAvailable} addToCartHandler={addToCartHandler} removeGoodHandler={removeGoodHandler} />
+            <GoodsListTable goods={goods} isGoodAvailable={isGoodAvailable} isGoodsNotEmpty={isGoodsNotEmpty} addToCartHandler={addToCartHandler} removeGoodHandler={removeGoodHandler} />
           </div>
         </div>
         <div className="col-xs-12 col-xxl-7">

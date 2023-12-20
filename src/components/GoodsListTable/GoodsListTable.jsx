@@ -1,4 +1,4 @@
-function GoodsListTable({goods, isGoodAvailable, addToCartHandler, removeGoodHandler}) {
+function GoodsListTable({goods, isGoodsNotEmpty, isGoodAvailable, addToCartHandler, removeGoodHandler}) {
   const addToCartButton = (goodId) => <button className="good_ btn btn-primary" data-good={goodId} onClick={addToCartHandler}>&#10149;</button>
   const deleteGoodButton = (goodId) => <button className="good_delete btn btn-danger" data-delete={goodId} onClick={removeGoodHandler} >&#10006;</button>
   const goodsTableContent = goods.map(good => (
@@ -15,7 +15,7 @@ function GoodsListTable({goods, isGoodAvailable, addToCartHandler, removeGoodHan
 
   return (
     <div className="table-responsive">
-      <table className="goods table mt-3" id="table1" hidden={goods.length ? null : "hidden"}>
+      <table className="goods table mt-3" id="table1" hidden={isGoodsNotEmpty() ? null : "hidden"}>
         <thead>
           <tr className="table-primary align-middle">
             <th data-type="number">№</th>
