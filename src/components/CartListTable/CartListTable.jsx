@@ -1,3 +1,5 @@
+import './CartListTable.css'
+
 function CartListTale({cartGoods, isGoodsNotEmpty, getDiscount, discountChangeHandler, calculateCartGoodPrice, removeGoodFromCartHandler}) {
   const cartTableContent = cartGoods.map(good => (
       <tr className="align-middle" key={good.id}>

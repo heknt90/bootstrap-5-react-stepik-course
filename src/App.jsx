@@ -7,7 +7,7 @@ import ModalAddGood from "./components/ModalAddGood/ModalAddGood";
 import MenuSearchAndCreateGood from "./components/MenuSearchAndCreateGood/MenuSearchAndCreateGood";
 import TotalPriceMenu from "./components/TotalPriceMenu/TotalPriceMenu";
 import GoodsListTable from "./components/GoodsListTable/GoodsListTable";
-import CartListTable from "./components/CartListTable";
+import CartListTable from "./components/CartListTable/CartListTable";
 import { getOrInitializeLocalStorageItem, saveItemToLocalStorage } from "./utils/localStorageUtilities"
 
 const mySwal = withReactContent(Swal)
