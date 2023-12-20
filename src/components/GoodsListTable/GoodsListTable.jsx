@@ -3,7 +3,7 @@ function GoodsListTable({goods, isGoodsNotEmpty, isGoodAvailable, addToCartHandl
   const deleteGoodButton = (goodId) => <button className="good_delete btn btn-danger" data-delete={goodId} onClick={removeGoodHandler} >&#10006;</button>
   const goodsTableContent = goods.map(good => (
       <tr className="align-middle" key={good.id}>
-        <td>{`${good.id+1}`}</td>
+        <td>{`${good.id}`}</td>
         <td className="name">{good.name}</td>
         <td className="price">{good.price}</td>
         <td>{good.count}</td>

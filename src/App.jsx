@@ -39,7 +39,7 @@ function App() {
 
   function filterGoodsList() {
     const condition = new RegExp(searchInputText, 'i')
-    const newGoods = goods.filter(good => condition.test(good.name) || condition.test(good.price))
+    const newGoods = goods.filter(good => condition.test(good.id) || condition.test(good.name) || condition.test(good.price))
     return newGoods
   }
 
@@ -53,7 +53,7 @@ function App() {
       setNewGoodTitle("")
       setNewGoodPrice(0)
       setNewGoodsCount(1)
-      setGoods(prev => [...prev, {id: prev.length, name: newGoodTitle, price: newGoodPrice, count: newGoodsCount}])
+      setGoods(prev => [...prev, {id: prev.length + 1, name: newGoodTitle, price: newGoodPrice, count: newGoodsCount}])
       const modal = Modal.getInstance(newGoodRef.current)
       modal.hide()
     } else {
