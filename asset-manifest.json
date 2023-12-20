@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.5a72e1d0.css",
-    "main.js": "/static/js/main.aecee797.js",
-    "static/js/787.2685150c.chunk.js": "/static/js/787.2685150c.chunk.js",
-    "index.html": "/index.html",
-    "main.5a72e1d0.css.map": "/static/css/main.5a72e1d0.css.map",
-    "main.aecee797.js.map": "/static/js/main.aecee797.js.map",
-    "787.2685150c.chunk.js.map": "/static/js/787.2685150c.chunk.js.map"
+    "main.css": "https://heknt90.github.io/bootstrap-5-react-stepik-course/static/css/main.5a72e1d0.css",
+    "main.js": "https://heknt90.github.io/bootstrap-5-react-stepik-course/static/js/main.d5057699.js",
+    "static/js/787.2685150c.chunk.js": "https://heknt90.github.io/bootstrap-5-react-stepik-course/static/js/787.2685150c.chunk.js",
+    "index.html": "https://heknt90.github.io/bootstrap-5-react-stepik-course/index.html",
+    "main.5a72e1d0.css.map": "https://heknt90.github.io/bootstrap-5-react-stepik-course/static/css/main.5a72e1d0.css.map",
+    "main.d5057699.js.map": "https://heknt90.github.io/bootstrap-5-react-stepik-course/static/js/main.d5057699.js.map",
+    "787.2685150c.chunk.js.map": "https://heknt90.github.io/bootstrap-5-react-stepik-course/static/js/787.2685150c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5a72e1d0.css",
-    "static/js/main.aecee797.js"
+    "static/js/main.d5057699.js"
   ]
 }
