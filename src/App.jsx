@@ -7,7 +7,7 @@ import ModalAddGood from "./components/ModalAddGood/ModalAddGood";
 import MenuSearchAndCreateGood from "./components/MenuSearchAndCreateGood/MenuSearchAndCreateGood";
 import TotalPriceMenu from "./components/TotalPriceMenu/TotalPriceMenu";
 import GoodsListTable from "./components/GoodsListTable/GoodsListTable";
-import CartListTale from "./components/CartListTable";
+import CartListTable from "./components/CartListTable";
 import { getOrInitializeLocalStorageItem, saveItemToLocalStorage } from "./utils/localStorageUtilities"
 
 const mySwal = withReactContent(Swal)
@@ -187,7 +187,7 @@ function App() {
         <div className="col-xs-12 col-xxl-7">
           <div className="price_box">
             <TotalPriceMenu totalPrice={calculateCartTotalPrice()} />
-            <CartListTale cartGoods={cartGoods} isGoodsNotEmpty={isGoodsNotEmpty} getDiscount={getDiscount} discountChangeHandler={discountChangeHandler} calculateCartGoodPrice={calculateCartGoodPrice} removeGoodFromCartHandler={removeGoodFromCartHandler} />
+            <CartListTable cartGoods={cartGoods} isGoodsNotEmpty={isGoodsNotEmpty} getDiscount={getDiscount} discountChangeHandler={discountChangeHandler} calculateCartGoodPrice={calculateCartGoodPrice} removeGoodFromCartHandler={removeGoodFromCartHandler} />
           </div>
         </div>
       </div>
