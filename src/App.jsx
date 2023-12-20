@@ -8,8 +8,8 @@ import ModalAddGood from "./components/ModalAddGood/ModalAddGood";
 import MenuSearchAndCreateGood from "./components/MenuSearchAndCreateGood/MenuSearchAndCreateGood";
 import TotalPriceMenu from "./components/TotalPriceMenu/TotalPriceMenu";
 import GoodsListTable from "./components/GoodsListTable/GoodsListTable";
+import CartListTale from "./components/CartListTable";
 import { getOrInitializeLocalStorageItem, saveItemToLocalStorage } from "./utils/localStorageUtilities"
-
 const mySwal = withReactContent(Swal)
 
 function App() {
@@ -19,7 +19,6 @@ function App() {
   const [searchInputText, setSearchInputOnChange] = useState("")
   const [goods, setGoods] = useState([])
   const [cartGoods, setCartGoods] = useState([])
-
   const newGoodRef = useRef(null)
   const goodsTableRef = useRef(null)
 
@@ -54,27 +53,12 @@ function App() {
     }
   } 
   
-  const row2 = cartGoods.map(good => (
-      <tr className="align-middle" key={good.id}>
-        <td>{`${good.id+1}`}</td>
-        <td className="price_name">{good.name}</td>
-        <td className="price_one">{good.price}</td>
-        <td className="price_count">{good.count}</td>
-        <td className="price_discount"><input type="number" data-good={good.id} value={getDiscount(good.id)} onChange={discountChangeHandler} min="0" max="100" /></td>
-        <td>{calculateCartGoodPrice(good)}</td>
-        <td><button className="good_delete btn btn-danger" data-delete={good.id} onClick={removeGoodFromCartHandler} >&#10006;</button></td>
-      </tr>
-    )
-  )
-    
-  function isGoodAvailable(goodId) {
+  const isGoodAvailable = (goodId) => {
     const candidate = goods.find(good => good.id === goodId)
     return (candidate && candidate.count > 0)
   }
-
-  function isGoodInCart(goodId) {
-    return !!cartGoods.find(good => good.id === goodId)
-  }
+  const isGoodInCart = (goodId) => !!cartGoods.find(good => good.id === goodId)
+  const isGoodsNotEmpty = () => !!goods.length
 
   function removeGoodHandler(event) {
     const deleteIndex = parseInt(event.target.dataset.delete)
@@ -191,24 +175,7 @@ function App() {
         <div className="col-xs-12 col-xxl-7">
           <div className="price_box">
             <TotalPriceMenu totalPrice={calculateCartTotalPrice()} />
-            <div className="table-responsive">
-              <table className="price table mt-3" id="table2" hidden={goods.length ? null : "hidden"}>
-                <thead>
-                  <tr className="table-primary align-middle">
-                    <th data-type="number">№</th>
-                    <th data-type="string">Название</th>
-                    <th data-type="number">Цена/шт., &#8381;</th>
-                    <th data-type="number">Количество</th>
-                    <th data-type="number">Скидка, %</th>
-                    <th data-type="number">Цена, &#8381;</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody className="cart">
-                  {row2}
-                </tbody>
-              </table>
-            </div>
+            <CartListTale cartGoods={cartGoods} isGoodsNotEmpty={isGoodsNotEmpty} getDiscount={getDiscount} discountChangeHandler={discountChangeHandler} calculateCartGoodPrice={calculateCartGoodPrice} removeGoodFromCartHandler={removeGoodFromCartHandler} />
           </div>
         </div>
       </div>
